@@ -59,7 +59,9 @@ if (UNIX)
 	
 	target_link_libraries(${PROJECT_NAME} Threads::Threads)
 	target_link_libraries(${PROJECT_NAME} tbb)
-
+	
+	install(TARGETS PotreeConverter DESTINATION /usr/bin)
+        install(TARGETS laszip DESTINATION /usr/lib)
 
 	#SET(CMAKE_CXX_FLAGS "-pthread -ltbb")
 endif (UNIX)
