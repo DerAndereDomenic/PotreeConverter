@@ -496,7 +496,7 @@ int main(int argc, char** argv) {
 
 	double tStart = now(); 
 
-	auto exePath = fs::canonical(fs::absolute(argv[0])).parent_path().string();
+	//auto exePath = fs::canonical(fs::absolute(argv[0])).parent_path().string();
 
 	launchMemoryChecker(2 * 1024, 0.1);
 	auto cpuData = getCpuData();
@@ -516,13 +516,13 @@ int main(int argc, char** argv) {
 	auto stats = computeStats(sources);
 	
 	string targetDir = options.outdir;
-	if (options.generatePage) {
+	/*if (options.generatePage) {
 
 		string pagedir = targetDir;
 		generatePage(exePath, pagedir, options.pageName);
 
 		targetDir = targetDir + "/pointclouds/" + options.pageName;
-	}
+	}*/
 	cout << "target directory: '" << targetDir << "'" << endl;
 	logger::addOutputFile(targetDir + "/log.txt");
 
