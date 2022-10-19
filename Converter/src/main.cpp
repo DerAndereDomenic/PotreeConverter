@@ -33,12 +33,20 @@ Options parseArguments(int argc, char** argv) {
 	args.addArgument("projection", "Add the projection of the pointcloud to the metadata");
 	args.addArgument("generate-page,p", "Generate a ready to use web page with the given name");
 	args.addArgument("title", "Page title used when generating a web page");
+	args.addArgument("process", "Processing file");
 
 	if (args.has("help")) {
 		cout << "PotreeConverter <source> -o <outdir>" << endl;
 		cout << endl << args.usage() << endl;
 		exit(0);
 	}
+
+	string process_file = "";
+	if(args.has("process")){
+		process_file = args.get("process").as<string>() + ".proc";
+	}
+
+	process_file = fs::weakly_canonical(fs::path(process_file)).string();
 
 	if (!args.has("source")) {
 		cout << "PotreeConverter <source> -o <outdir>" << endl;
@@ -120,6 +128,7 @@ Options parseArguments(int argc, char** argv) {
 	Options options;
 	options.source = source;
 	options.outdir = outdir;
+	options.process_file = process_file;
 	options.method = method;
 	options.encoding = encoding;
 	options.chunkMethod = chunkMethod;
