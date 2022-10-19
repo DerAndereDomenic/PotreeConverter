@@ -41,7 +41,7 @@ Options parseArguments(int argc, char** argv) {
 		exit(0);
 	}
 
-	string process_file = "";
+	string process_file = "default";
 	if(args.has("process")){
 		process_file = args.get("process").as<string>() + ".proc";
 	}
@@ -303,11 +303,11 @@ struct Monitor {
 	}
 };
 
-shared_ptr<Monitor> startMonitoring(State& state) {
+shared_ptr<Monitor> startMonitoring(State& state, const string& progress_file) {
 
 	shared_ptr<Monitor> monitor = make_shared<Monitor>();
 
-	monitor->t = thread([monitor, &state]() {
+	monitor->t = thread([monitor, &state, &progress_file]() {
 
 		using namespace std::chrono_literals;
 
@@ -340,6 +340,12 @@ shared_ptr<Monitor> startMonitoring(State& state) {
 				<< "[RAM: " << strRAM << ", CPU: " << strCPU << "]";
 
 			cout << ss.str() << endl;
+
+			//For communicating with the kompakkt server
+			std::ofstream prog_file;
+			prog_file.open(progress_file);
+			prog_file << static_cast<int32_t>(progressTotal) << "\n";
+			prog_file.close();
 
 			std::this_thread::sleep_for(1'000ms);
 		}
@@ -539,7 +545,8 @@ int main(int argc, char** argv) {
 	state.pointsTotal = stats.totalPoints;
 	state.bytesProcessed = stats.totalBytes;
 
-	auto monitor = startMonitoring(state);
+	string progress_file = options.process_file;
+	auto monitor = startMonitoring(state, progress_file);
 
 
 	{ // this is the real important stuff
@@ -553,6 +560,12 @@ int main(int argc, char** argv) {
 	monitor->stop();
 
 	createReport(options, sources, targetDir, stats, state, tStart);
+
+	//Write signal that processing is done
+	std::ofstream prog_file;
+	prog_file.open(progress_file);
+	prog_file << static_cast<int32_t>(-1) << "\n";
+	prog_file.close();
 
 
 	return 0;
