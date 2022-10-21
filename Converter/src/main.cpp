@@ -344,7 +344,7 @@ shared_ptr<Monitor> startMonitoring(State& state, const string& progress_file) {
 			//For communicating with the kompakkt server
 			std::ofstream prog_file;
 			prog_file.open(progress_file);
-			prog_file << static_cast<int32_t>(progressTotal) << "\n";
+			prog_file << static_cast<int32_t>(progressTotal);
 			prog_file.close();
 
 			std::this_thread::sleep_for(1'000ms);
@@ -564,7 +564,7 @@ int main(int argc, char** argv) {
 	//Write signal that processing is done
 	std::ofstream prog_file;
 	prog_file.open(progress_file);
-	prog_file << static_cast<int32_t>(-1) << "\n";
+	prog_file << static_cast<int32_t>(-1);
 	prog_file.close();
 
 
