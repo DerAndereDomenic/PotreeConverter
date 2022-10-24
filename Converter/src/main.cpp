@@ -33,7 +33,7 @@ Options parseArguments(int argc, char** argv) {
 	args.addArgument("projection", "Add the projection of the pointcloud to the metadata");
 	args.addArgument("generate-page,p", "Generate a ready to use web page with the given name");
 	args.addArgument("title", "Page title used when generating a web page");
-	args.addArgument("process", "Processing file");
+	args.addArgument("progress", "Progress file");
 
 	if (args.has("help")) {
 		cout << "PotreeConverter <source> -o <outdir>" << endl;
@@ -41,12 +41,12 @@ Options parseArguments(int argc, char** argv) {
 		exit(0);
 	}
 
-	string process_file = "default";
-	if(args.has("process")){
-		process_file = args.get("process").as<string>() + ".proc";
+	string progress_file = "progress.json";
+	if(args.has("progress")){
+		progress_file = args.get("progress").as<string>() + ".json";
 	}
 
-	process_file = fs::weakly_canonical(fs::path(process_file)).string();
+	progress_file = fs::weakly_canonical(fs::path(progress_file)).string();
 
 	if (!args.has("source")) {
 		cout << "PotreeConverter <source> -o <outdir>" << endl;
@@ -128,7 +128,7 @@ Options parseArguments(int argc, char** argv) {
 	Options options;
 	options.source = source;
 	options.outdir = outdir;
-	options.process_file = process_file;
+	options.progress_file = progress_file;
 	options.method = method;
 	options.encoding = encoding;
 	options.chunkMethod = chunkMethod;
@@ -344,7 +344,7 @@ shared_ptr<Monitor> startMonitoring(State& state, const string& progress_file) {
 			//For communicating with the kompakkt server
 			std::ofstream prog_file;
 			prog_file.open(progress_file);
-			prog_file << static_cast<int32_t>(progressTotal);
+			prog_file << "{ \"progress\" : " << static_cast<int32_t>(progressTotal) << " }";
 			prog_file.close();
 
 			std::this_thread::sleep_for(1'000ms);
@@ -545,7 +545,7 @@ int main(int argc, char** argv) {
 	state.pointsTotal = stats.totalPoints;
 	state.bytesProcessed = stats.totalBytes;
 
-	string progress_file = options.process_file;
+	string progress_file = options.progress_file;
 	auto monitor = startMonitoring(state, progress_file);
 
 
@@ -564,7 +564,7 @@ int main(int argc, char** argv) {
 	//Write signal that processing is done
 	std::ofstream prog_file;
 	prog_file.open(progress_file);
-	prog_file << static_cast<int32_t>(-1);
+	prog_file << "{ \"progress\" : " << static_cast<int32_t>(100) << " }";
 	prog_file.close();
 
 

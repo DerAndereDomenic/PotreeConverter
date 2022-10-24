@@ -160,7 +160,7 @@ struct Options {
 	vector<string> source;
 	string encoding = "DEFAULT"; // "BROTLI", "UNCOMPRESSED"
 	string outdir = "";
-	string process_file = "";
+	string progress_file = "";
 	string name = "";
 	string method = "";
 	string chunkMethod = "";
