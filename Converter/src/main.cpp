@@ -564,7 +564,8 @@ int main(int argc, char** argv) {
 	//Write signal that processing is done
 	std::ofstream prog_file;
 	prog_file.open(progress_file);
-	prog_file << "{ \"progress\" : " << static_cast<int32_t>(100) << ", \"finished\" : true }";
+	//After the converter was run, the processing on the server is not finished but temp files get deleted!
+	prog_file << "{ \"progress\" : " << static_cast<int32_t>(100) << ", \"finished\" : false }";
 	prog_file.close();
 
 
